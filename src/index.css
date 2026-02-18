@@ -1,0 +1,526 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #0EA5E9;
+    --primary-light: #e0f2fe;
+    --primary-dark: #0284c7;
+    --sidebar-bg: #001529;
+    --sidebar-dark: #000c17;
+    --bg: #f0f5ff;
+    --card-radius: 12px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg);
+}
+
+#root {
+    min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* ===== ANT DESIGN OVERRIDES ===== */
+
+/* Sidebar */
+.ant-layout-sider {
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dark sidebar menu overrides */
+.ant-layout-sider .ant-menu-dark .ant-menu-item {
+    border-radius: 8px !important;
+    margin: 4px 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ant-layout-sider .ant-menu-dark .ant-menu-item:hover {
+    background: rgba(14, 165, 233, 0.15) !important;
+    box-shadow: 0 0 12px rgba(14, 165, 233, 0.1);
+}
+
+.ant-layout-sider .ant-menu-dark .ant-menu-item-selected {
+    background: linear-gradient(135deg, #0EA5E9, #0284c7) !important;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
+    font-weight: 500 !important;
+}
+
+.ant-layout-sider .ant-menu-dark .ant-menu-submenu-title {
+    border-radius: 8px !important;
+    margin: 4px 8px !important;
+}
+
+.ant-layout-sider .ant-menu-dark .ant-menu-submenu-title:hover {
+    background: rgba(14, 165, 233, 0.15) !important;
+}
+
+/* Cards */
+.ant-card {
+    border-radius: var(--card-radius) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden;
+}
+
+.ant-card:hover {
+    box-shadow: var(--shadow-md) !important;
+    transform: translateY(-1px);
+}
+
+/* Tables */
+.ant-table-wrapper {
+    border-radius: var(--card-radius);
+    overflow: hidden;
+}
+
+.ant-table-wrapper .ant-table-thead>tr>th {
+    background: #fafbfc !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: #64748b !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.ant-table-wrapper .ant-table-tbody>tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.ant-table-wrapper .ant-table-tbody>tr:hover>td {
+    background: var(--primary-light) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody>tr>td {
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background 0.2s ease !important;
+}
+
+/* Buttons */
+.ant-btn-primary {
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+
+.ant-btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+.ant-btn-text:hover {
+    background: var(--primary-light) !important;
+}
+
+/* Menu selected item */
+.ant-menu-item-selected {
+    font-weight: 500;
+}
+
+/* Tags */
+.ant-tag {
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+}
+
+/* Inputs */
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker {
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+}
+
+/* Modal */
+.ant-modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+.ant-modal-header {
+    border-radius: 16px 16px 0 0 !important;
+}
+
+/* Steps */
+.ant-steps .ant-steps-item-process .ant-steps-item-icon {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+/* ===== ANIMATIONS ===== */
+
+/* Staggered fade-in for page content */
+.page-animate {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+}
+
+.page-animate>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.page-animate>*:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.page-animate>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.page-animate>*:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.page-animate>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stat card hover lift */
+.stat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Count-up animation */
+@keyframes countIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.count-animate .ant-statistic-content-value {
+    animation: countIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Chart card entrance */
+.chart-card {
+    animation: fadeScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes fadeScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Welcome bar gradient */
+.welcome-bar {
+    background: linear-gradient(135deg, #0EA5E9 0%, #0284c7 50%, #0369a1 100%);
+    border-radius: var(--card-radius);
+    padding: 28px 32px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-bar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.welcome-bar::after {
+    content: '';
+    position: absolute;
+    bottom: -60%;
+    right: 15%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+/* Notification badge pulse */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.notification-bell:hover {
+    color: var(--primary) !important;
+}
+
+.notification-bell::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* Responsive mobile adjustments */
+@media (max-width: 768px) {
+    .ant-layout-sider {
+        position: fixed !important;
+        z-index: 1000 !important;
+    }
+
+    .mobile-content {
+        margin-left: 0 !important;
+    }
+
+    .welcome-bar {
+        padding: 20px;
+    }
+
+    .quick-action-btn {
+        font-size: 12px !important;
+        padding: 4px 10px !important;
+    }
+}
+
+/* Quick action buttons */
+.quick-action-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease !important;
+}
+
+.quick-action-btn:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Empty state styling */
+.ant-empty {
+    padding: 40px 0;
+}
+
+.ant-empty-description {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* Breadcrumb */
+.ant-breadcrumb {
+    font-size: 13px;
+}
+
+.ant-breadcrumb a {
+    color: #64748b !important;
+    transition: color 0.2s;
+}
+
+.ant-breadcrumb a:hover {
+    color: var(--primary) !important;
+}
+
+/* ===== FORM STYLES ===== */
+
+/* Page header */
+.form-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* Back button */
+.form-back-btn {
+    border-radius: 10px !important;
+    height: 40px !important;
+    width: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.2s ease !important;
+}
+
+.form-back-btn:hover {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: var(--primary-light) !important;
+}
+
+/* Section header inside forms */
+.form-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.form-section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Form step transitions */
+.form-step {
+    animation: formStepIn 0.35s ease forwards;
+}
+
+@keyframes formStepIn {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Navigation buttons */
+.form-nav-btn {
+    border-radius: 10px !important;
+    height: 44px !important;
+    padding-inline: 24px !important;
+    font-weight: 500 !important;
+}
+
+.form-continue-btn {
+    font-weight: 600 !important;
+    padding-inline: 28px !important;
+}
+
+.form-save-btn {
+    font-weight: 600 !important;
+    padding-inline: 28px !important;
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    border-color: #22c55e !important;
+}
+
+.form-save-btn:hover {
+    background: linear-gradient(135deg, #16a34a, #15803d) !important;
+    border-color: #16a34a !important;
+}
+
+/* Form labels */
+.ant-form-vertical .ant-form-item-label>label {
+    font-weight: 500 !important;
+    color: #374151 !important;
+    font-size: 13px !important;
+}
+
+/* Form tooltip icon */
+.ant-form-item-tooltip {
+    color: #94a3b8 !important;
+}
+
+/* Steps custom styling */
+.ant-steps .ant-steps-item-title {
+    font-size: 14px !important;
+}
+
+/* Modal form polish */
+.ant-modal .ant-form-item-label>label {
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+/* Textarea styling */
+.ant-input-textarea textarea {
+    border-radius: 8px !important;
+}
