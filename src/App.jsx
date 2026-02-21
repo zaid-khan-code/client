@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { getAllEmployee } from "./services/employee";
 
 function App() {
   const [employeeId, setEmployeeId] = useState("");
@@ -55,7 +56,8 @@ function App() {
   }
 
   useEffect(() => {
-    fetchEmployee();
+    // fetchEmployee();
+    getAllEmployee();
   }, []);
   return (
     <>
