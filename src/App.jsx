@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { getAllEmployee } from "./services/employee";
+import {
+  createEmployee,
+  deleteEmployeeById,
+  getAllEmployee,
+  getEmployeeById,
+} from "./services/employee";
 
 function App() {
   const [employeeId, setEmployeeId] = useState("");
@@ -12,7 +17,7 @@ function App() {
 
   function submitData(e) {
     e.preventDefault();
-    console.log(e);
+    // console.log(e);
     if (!employeeId && !empName && !empFatherName && !empCNIC && !dateOfBirth) {
       return true;
     } else {
@@ -28,15 +33,8 @@ function App() {
       date_of_birth: dateOfBirth.trim(),
     };
     try {
-      const response = await fetch("http://localhost:3000/api/employees", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
-      });
-      const result = await response.json();
-      console.log(result);
+      await createEmployee(newUser);
+      fetchEmployee();
       setCnic("");
       setEmployeeId("");
       setFather_name("");
@@ -47,27 +45,28 @@ function App() {
     }
   }
 
+  async function deleteData(id) {
+    try {
+      await deleteEmployeeById(id);
+      fetchEmployee();
+    } catch (error) {
+      throw new Error(`ERROR sending Data ${error}`);
+    }
+  }
+
   async function fetchEmployee() {
     try {
-      // fetch("http://localhost:3000/api/employees")
-      //   .then((response) => response.json())
-      //   .then((data) => setEmployees(data));
-      const getEmp = await getAllEmployee()
-       
-      setEmployees(getEmp.data);  
-      
-    
-      
-      
+      const getEmp = await getAllEmployee();
+      console.log(getEmp);
+
+      setEmployees(getEmp.data);
     } catch (error) {
       console.log(error);
-      
     }
   }
 
   useEffect(() => {
     fetchEmployee();
-    
   }, []);
   return (
     <>
@@ -87,7 +86,7 @@ function App() {
               title="Employee number should be in the format EMPxxx where 'x' is a digit."
               className="form-input"
               required
-              />
+            />
           </label>
           <label htmlFor="empName" className="form-group">
             <h3 className="form-label">Employee Name</h3>
@@ -102,7 +101,7 @@ function App() {
               title="Employee name should contain only letters, spaces, hyphens, and apostrophes."
               className="form-input"
               required
-              />
+            />
           </label>
           <label htmlFor="empFName" className="form-group">
             <h3 className="form-label">Employee Father Name</h3>
@@ -117,7 +116,7 @@ function App() {
               title="Father name should contain only letters, spaces, hyphens, and apostrophes."
               className="form-input"
               required
-              />
+            />
           </label>
           <label htmlFor="empCnic" className="form-group">
             <h3 className="form-label">Employee CNIC</h3>
@@ -132,7 +131,7 @@ function App() {
               title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
               className="form-input"
               required
-              />
+            />
           </label>
           <label htmlFor="empBD" className="form-group">
             <h3 className="form-label">Employee Date Of Birth</h3>
@@ -145,7 +144,7 @@ function App() {
               title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
               className="form-input"
               required
-              />
+            />
           </label>
           <button type="submit" className="form-button">
             Submit
@@ -172,15 +171,23 @@ function App() {
                     </td>
                   </tr>
                 ) : (
-                  employees.map((employee) => (
+                  employees.map((employee, index) => (
                     <tr
-                    key={employee.employee_id || employee.id || employee.cnic}
+                      key={
+                        employee.employee_id ??
+                        employee.id ??
+                        employee.cnic ??
+                        `employee-row-${index}`
+                      }
                     >
                       <td>{employee.employee_id || "-"}</td>
                       <td>{employee.name || "-"}</td>
                       <td>{employee.father_name || "-"}</td>
                       <td>{employee.cnic || "-"}</td>
                       <td>{employee.date_of_birth || "-"}</td>
+                      <td onClick={()=>{deleteData(employee.id)}}>
+                        <button>Delete Employee </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -192,5 +199,5 @@ function App() {
     </>
   );
 }
- 
+
 export default App;
