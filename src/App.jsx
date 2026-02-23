@@ -8,7 +8,7 @@ function App() {
   const [empFatherName, setFather_name] = useState("");
   const [empCNIC, setCnic] = useState("");
   const [dateOfBirth, setDate] = useState("");
-  const [employees, setEmployees] = useState("");
+  const [employees, setEmployees] = useState([]);
 
   function submitData(e) {
     e.preventDefault();
@@ -49,15 +49,25 @@ function App() {
 
   async function fetchEmployee() {
     try {
-      fetch("http://localhost:3000/api/employees")
-        .then((response) => response.json())
-        .then((data) => setEmployees(data));
-    } catch (error) {}
+      // fetch("http://localhost:3000/api/employees")
+      //   .then((response) => response.json())
+      //   .then((data) => setEmployees(data));
+      const getEmp = await getAllEmployee()
+       
+      setEmployees(getEmp.data);  
+      
+    
+      
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 
   useEffect(() => {
-    // fetchEmployee();
-    getAllEmployee();
+    fetchEmployee();
+    
   }, []);
   return (
     <>
@@ -77,7 +87,7 @@ function App() {
               title="Employee number should be in the format EMPxxx where 'x' is a digit."
               className="form-input"
               required
-            />
+              />
           </label>
           <label htmlFor="empName" className="form-group">
             <h3 className="form-label">Employee Name</h3>
@@ -92,7 +102,7 @@ function App() {
               title="Employee name should contain only letters, spaces, hyphens, and apostrophes."
               className="form-input"
               required
-            />
+              />
           </label>
           <label htmlFor="empFName" className="form-group">
             <h3 className="form-label">Employee Father Name</h3>
@@ -107,7 +117,7 @@ function App() {
               title="Father name should contain only letters, spaces, hyphens, and apostrophes."
               className="form-input"
               required
-            />
+              />
           </label>
           <label htmlFor="empCnic" className="form-group">
             <h3 className="form-label">Employee CNIC</h3>
@@ -122,7 +132,7 @@ function App() {
               title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
               className="form-input"
               required
-            />
+              />
           </label>
           <label htmlFor="empBD" className="form-group">
             <h3 className="form-label">Employee Date Of Birth</h3>
@@ -135,7 +145,7 @@ function App() {
               title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
               className="form-input"
               required
-            />
+              />
           </label>
           <button type="submit" className="form-button">
             Submit
@@ -164,7 +174,7 @@ function App() {
                 ) : (
                   employees.map((employee) => (
                     <tr
-                      key={employee.employee_id || employee.id || employee.cnic}
+                    key={employee.employee_id || employee.id || employee.cnic}
                     >
                       <td>{employee.employee_id || "-"}</td>
                       <td>{employee.name || "-"}</td>
@@ -182,5 +192,5 @@ function App() {
     </>
   );
 }
-
+ 
 export default App;
