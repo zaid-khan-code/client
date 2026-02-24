@@ -5,6 +5,7 @@ import {
   deleteEmployeeById,
   getAllEmployee,
   getEmployeeById,
+  UpdateEmployee,
 } from "./services/employee";
 
 function App() {
@@ -13,7 +14,10 @@ function App() {
   const [empFatherName, setFather_name] = useState("");
   const [empCNIC, setCnic] = useState("");
   const [dateOfBirth, setDate] = useState("");
+  const [update, setUpdate] = useState(false);
+  const [id, setId] = useState(0);
   const [employees, setEmployees] = useState([]);
+console.log(id);
 
   function submitData(e) {
     e.preventDefault();
@@ -21,7 +25,29 @@ function App() {
     if (!employeeId && !empName && !empFatherName && !empCNIC && !dateOfBirth) {
       return true;
     } else {
-      sendData();
+      update ? sendUpdatedEmp() : sendData();
+    }
+  }
+  async function sendUpdatedEmp() {
+    const updateUser = {
+      employee_id: employeeId.trim(),
+      name: empName.trim(),
+      father_name: empFatherName.trim(),
+      cnic: empCNIC.trim(),
+      date_of_birth: dateOfBirth.trim(),
+    };
+    try {
+      await UpdateEmployee(id, updateUser);
+      fetchEmployee();
+      setCnic("");
+      setEmployeeId("");
+      setFather_name("");
+      setName("");
+      setDate("");
+    } catch (error) {
+      throw new Error(`ERROR sending Data ${error}`);
+    }finally{
+      setUpdate(false);
     }
   }
   async function sendData() {
@@ -57,12 +83,21 @@ function App() {
   async function fetchEmployee() {
     try {
       const getEmp = await getAllEmployee();
-      console.log(getEmp);
-
       setEmployees(getEmp.data);
     } catch (error) {
       console.log(error);
     }
+  }
+  async function updateEmp(employee) {
+    setId(employee.id);
+    setUpdate(true);
+    setCnic(employee.cnic);
+    setEmployeeId(employee.employee_id);
+    setFather_name(employee.father_name);
+    setName(employee.name);
+    setDate(employee.date_of_birth);
+    console.log(id);
+    
   }
 
   useEffect(() => {
@@ -73,6 +108,7 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 py-10 px-5 flex justify-center items-center">
         <form onSubmit={submitData} className="form-container">
           <h1 className="form-title">Employee Form</h1>
+
           <label htmlFor="empNum" className="form-group">
             <h3 className="form-label">Employee Number</h3>
             <input
@@ -141,17 +177,19 @@ function App() {
               id="empBD"
               value={dateOfBirth}
               onChange={(e) => setDate(e.target.value)}
-              title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
               className="form-input"
               required
             />
           </label>
           <button type="submit" className="form-button">
-            Submit
+            {update ? "Update" : "Submit"}
           </button>
         </form>
         <section className="table-container" aria-label="Employee data table">
           <h2 className="table-title">Employee Data</h2>
+          <h2 className="table-title">
+            <button onClick={()=>fetchEmployee()}>Refresh Data </button> 
+          </h2>
           <div className="table-wrapper">
             <table className="employee-table">
               <thead>
@@ -185,8 +223,19 @@ function App() {
                       <td>{employee.father_name || "-"}</td>
                       <td>{employee.cnic || "-"}</td>
                       <td>{employee.date_of_birth || "-"}</td>
-                      <td onClick={()=>{deleteData(employee.id)}}>
+                      <td
+                        onClick={() => {
+                          deleteData(employee.id);
+                        }}
+                        className="bg-[#ff3232] text-white"
+                      >
                         <button>Delete Employee </button>
+                      </td>
+                      <td
+                        onClick={() => updateEmp(employee)}
+                        className="bg-[#3aff3a] text-white"
+                      >
+                        <button>Update Employee </button>
                       </td>
                     </tr>
                   ))
