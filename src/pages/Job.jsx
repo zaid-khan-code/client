@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import {
   createEmployee,
   deleteEmployeeById,
-  getAllEmployee, 
+  getAllEmployee,
   UpdateEmployee,
-} from "./services/employee";
+} from ".././services/employee";
 import { Link } from "react-router-dom";
 
-function App() {
+function Job() {
   const [employeeId, setEmployeeId] = useState("");
   const [empName, setName] = useState("");
   const [empFatherName, setFather_name] = useState("");
@@ -108,7 +107,7 @@ function App() {
         <form onSubmit={submitData} className="form-container">
           <h1 className="form-title">Employee Form</h1>
           <h1 className="form-title">
-            <Link to="/extraemp">Go to the Extra Employee Form</Link>
+            <Link to="/empjob">Go to the Employee Job Form</Link>
           </h1>
 
           <label htmlFor="empNum" className="form-group">
@@ -251,4 +250,4 @@ function App() {
   );
 }
 
-export default App;
+export default Job;

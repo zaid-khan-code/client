@@ -1,23 +1,36 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import {
   createEmployee,
   deleteEmployeeById,
-  getAllEmployee, 
+  getAllEmployee,
   UpdateEmployee,
-} from "./services/employee";
+  getEmployeeId,
+} from ".././services/employee";
 import { Link } from "react-router-dom";
 
-function App() {
-  const [employeeId, setEmployeeId] = useState("");
-  const [empName, setName] = useState("");
-  const [empFatherName, setFather_name] = useState("");
+function ExtraEmp() {
+  const [formEmpId, setFormEmpId] = useState("");
+  const [formContact1, setFormContact1] = useState("");
+  const [formContact2, setFormContact2] = useState("");
+  const [formEmgContact1, setFormEmgContact1] = useState("");
+  const [formEmgContact2, setFormEmgContact2] = useState("");
   const [empCNIC, setCnic] = useState("");
   const [dateOfBirth, setDate] = useState("");
   const [update, setUpdate] = useState(false);
-  const [id, setId] = useState(0);
+
   const [employees, setEmployees] = useState([]);
-  console.log(id);
+  const [id, setId] = useState(0);
+  const [employeeId, setEmployeeId] = useState([]);
+  async function fetchEmpIds() {
+    try {
+      const empId = await getEmployeeId();
+      setEmployeeId(empId.data);
+      console.log(empId.data);
+    } catch (error) {
+      throw new Error("error", error);
+    }
+  }
+console.log(formEmpId);
 
   function submitData(e) {
     e.preventDefault();
@@ -101,6 +114,7 @@ function App() {
 
   useEffect(() => {
     fetchEmployee();
+    fetchEmpIds();
   }, []);
   return (
     <>
@@ -108,40 +122,31 @@ function App() {
         <form onSubmit={submitData} className="form-container">
           <h1 className="form-title">Employee Form</h1>
           <h1 className="form-title">
-            <Link to="/extraemp">Go to the Extra Employee Form</Link>
+            <Link to="/empjob">Go to the Employee Job Form</Link>
           </h1>
 
           <label htmlFor="empNum" className="form-group">
             <h3 className="form-label">Employee Number</h3>
-            <input
-              type="text"
-              name="empNum"
-              id="empNum"
-              placeholder="EMP001"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-              pattern="^EMP\d{3}$"
-              title="Employee number should be in the format EMPxxx where 'x' is a digit."
-              className="form-input"
-              required
-            />
           </label>
           <label htmlFor="empName" className="form-group">
             <h3 className="form-label">Employee Name</h3>
-            <input
-              type="text"
-              name="empName"
-              id="empName"
-              placeholder="Zaid khan"
-              value={empName}
-              onChange={(e) => setName(e.target.value)}
-              pattern="^[a-zA-Z\s\-']+$"
-              title="Employee name should contain only letters, spaces, hyphens, and apostrophes."
+            <select
+              
+              onChange={(e) => setFormEmpId(e.target.value)}
               className="form-input"
               required
-            />
+            >
+              <option value="" className="hidden" selected>
+                Select Department
+              </option>
+              {employeeId.map(({ employee_id }) => (
+                <option key={employee_id} value={employee_id}>
+                  {employee_id}
+                </option>
+              ))}
+            </select>
           </label>
-          <label htmlFor="empFName" className="form-group">
+          {/* <label htmlFor="empFName" className="form-group">
             <h3 className="form-label">Employee Father Name</h3>
             <input
               type="text"
@@ -185,7 +190,7 @@ function App() {
           </label>
           <button type="submit" className="form-button">
             {update ? "Update" : "Submit"}
-          </button>
+          </button> */}
         </form>
         <section className="table-container" aria-label="Employee data table">
           <h2 className="table-title">Employee Data</h2>
@@ -251,4 +256,4 @@ function App() {
   );
 }
 
-export default App;
+export default ExtraEmp;
