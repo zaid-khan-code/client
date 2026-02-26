@@ -14,71 +14,91 @@ function ExtraEmp() {
   const [formContact2, setFormContact2] = useState("");
   const [formEmgContact1, setFormEmgContact1] = useState("");
   const [formEmgContact2, setFormEmgContact2] = useState("");
-  const [empCNIC, setCnic] = useState(""); 
-  const [dateOfBirth, setDate] = useState("");
+  const [formBankName, setFormBankName] = useState("");
+  const [formBankAccNum, setFormBankAccNum] = useState("");
+  const [formPostalAddress, setFormPostalAddress] = useState("");
+  const [formPerAddress, setFormPerAddress] = useState("");
   const [update, setUpdate] = useState(false);
 
   const [employees, setEmployees] = useState([]);
   const [id, setId] = useState(0);
   const [employeeId, setEmployeeId] = useState([]);
+
   async function fetchEmpIds() {
     try {
       const empId = await getEmployeeId();
       setEmployeeId(empId.data);
-      console.log(empId.data);
     } catch (error) {
       throw new Error("error", error);
     }
   }
-console.log(formEmpId);
+
+  function clearForm() {
+    setFormEmpId("");
+    setFormContact1("");
+    setFormContact2("");
+    setFormEmgContact1("");
+    setFormEmgContact2("");
+    setFormBankName("");
+    setFormBankAccNum("");
+    setFormPostalAddress("");
+    setFormPerAddress("");
+  }
+
+  function getFormPayload() {
+    return {
+      employee_id: formEmpId.trim(),
+      contact_1: formContact1.trim(),
+      contact_2: formContact2.trim(),
+      emg_contact_1: formEmgContact1.trim(),
+      emg_contact_2: formEmgContact2.trim(),
+      bank_name: formBankName.trim(),
+      bank_acc_num: formBankAccNum.trim(),
+      postal_address: formPostalAddress.trim(),
+      per_address: formPerAddress.trim(),
+    };
+  }
 
   function submitData(e) {
     e.preventDefault();
-    // console.log(e);
-    if (!employeeId && !empName && !empFatherName && !empCNIC && !dateOfBirth) {
-      return true;
-    } else {
-      update ? sendUpdatedEmp() : sendData();
+    if (
+      !formEmpId.trim() ||
+      !formContact1.trim() ||
+      !formContact2.trim() ||
+      !formEmgContact1.trim() ||
+      !formEmgContact2.trim() ||
+      !formBankName.trim() ||
+      !formBankAccNum.trim() ||
+      !formPostalAddress.trim() ||
+      !formPerAddress.trim()
+    ) {
+      return;
     }
+
+    update ? sendUpdatedEmp() : sendData();
   }
+
   async function sendUpdatedEmp() {
-    const updateUser = {
-      employee_id: employeeId.trim(),
-      name: empName.trim(),
-      father_name: empFatherName.trim(),
-      cnic: empCNIC.trim(),
-      date_of_birth: dateOfBirth.trim(),
-    };
+    const updateUser = getFormPayload();
+
     try {
       await UpdateEmployee(id, updateUser);
       fetchEmployee();
-      setCnic("");
-      setEmployeeId("");
-      setFather_name("");
-      setName("");
-      setDate("");
+      clearForm();
     } catch (error) {
       throw new Error(`ERROR sending Data ${error}`);
     } finally {
       setUpdate(false);
     }
   }
+
   async function sendData() {
-    const newUser = {
-      employee_id: employeeId.trim(),
-      name: empName.trim(),
-      father_name: empFatherName.trim(),
-      cnic: empCNIC.trim(),
-      date_of_birth: dateOfBirth.trim(),
-    };
+    const newUser = getFormPayload();
+
     try {
       await createEmployee(newUser);
       fetchEmployee();
-      setCnic("");
-      setEmployeeId("");
-      setFather_name("");
-      setName("");
-      setDate("");
+      clearForm();
     } catch (error) {
       throw new Error(`ERROR sending Data ${error}`);
     }
@@ -101,21 +121,26 @@ console.log(formEmpId);
       console.log(error);
     }
   }
+
   async function updateEmp(employee) {
     setId(employee.id);
     setUpdate(true);
-    setCnic(employee.cnic);
-    setEmployeeId(employee.employee_id);
-    setFather_name(employee.father_name);
-    setName(employee.name);
-    setDate(employee.date_of_birth);
-    console.log(id);
+    setFormEmpId(employee.employee_id ?? "");
+    setFormContact1(employee.contact_1 ?? "");
+    setFormContact2(employee.contact_2 ?? "");
+    setFormEmgContact1(employee.emg_contact_1 ?? "");
+    setFormEmgContact2(employee.emg_contact_2 ?? "");
+    setFormBankName(employee.bank_name ?? "");
+    setFormBankAccNum(employee.bank_acc_num ?? "");
+    setFormPostalAddress(employee.postal_address ?? "");
+    setFormPerAddress(employee.per_address ?? "");
   }
 
   useEffect(() => {
     fetchEmployee();
     fetchEmpIds();
   }, []);
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 py-10 px-5 flex justify-center items-center">
@@ -127,17 +152,16 @@ console.log(formEmpId);
 
           <label htmlFor="empNum" className="form-group">
             <h3 className="form-label">Employee Number</h3>
-          </label>
-          <label htmlFor="empName" className="form-group">
-            <h3 className="form-label">Employee Name</h3>
             <select
-              
+              id="empNum"
+              name="empNum"
+              value={formEmpId}
               onChange={(e) => setFormEmpId(e.target.value)}
               className="form-input"
               required
             >
-              <option value="" className="hidden" selected>
-                Select Department
+              <option value="" className="hidden">
+                Select Employee Number
               </option>
               {employeeId.map(({ employee_id }) => (
                 <option key={employee_id} value={employee_id}>
@@ -146,51 +170,122 @@ console.log(formEmpId);
               ))}
             </select>
           </label>
-          {/* <label htmlFor="empFName" className="form-group">
-            <h3 className="form-label">Employee Father Name</h3>
+
+          <label htmlFor="contact1" className="form-group">
+            <h3 className="form-label">Contact 1</h3>
+            <input
+              type="tel"
+              name="contact1"
+              id="contact1"
+              placeholder="03001234567"
+              value={formContact1}
+              onChange={(e) => setFormContact1(e.target.value)}
+              className="form-input"
+              required
+            />
+          </label>
+
+          <label htmlFor="contact2" className="form-group">
+            <h3 className="form-label">Contact 2</h3>
+            <input
+              type="tel"
+              name="contact2"
+              id="contact2"
+              placeholder="03111234567"
+              value={formContact2}
+              onChange={(e) => setFormContact2(e.target.value)}
+              className="form-input"
+              required
+            />
+          </label>
+
+          <label htmlFor="emgContact1" className="form-group">
+            <h3 className="form-label">Emergency Contact 1</h3>
+            <input
+              type="tel"
+              name="emgContact1"
+              id="emgContact1"
+              placeholder="03221234567"
+              value={formEmgContact1}
+              onChange={(e) => setFormEmgContact1(e.target.value)}
+              className="form-input"
+              required
+            />
+          </label>
+
+          <label htmlFor="emgContact2" className="form-group">
+            <h3 className="form-label">Emergency Contact 2</h3>
+            <input
+              type="tel"
+              name="emgContact2"
+              id="emgContact2"
+              placeholder="03331234567"
+              value={formEmgContact2}
+              onChange={(e) => setFormEmgContact2(e.target.value)}
+              className="form-input"
+              required
+            />
+          </label>
+
+          <label htmlFor="bankName" className="form-group">
+            <h3 className="form-label">Bank Name</h3>
             <input
               type="text"
-              name="empFName"
-              id="empFName"
-              placeholder="Asif khan"
-              value={empFatherName}
-              onChange={(e) => setFather_name(e.target.value)}
-              pattern="^[a-zA-Z\s\-']+$"
-              title="Father name should contain only letters, spaces, hyphens, and apostrophes."
+              name="bankName"
+              id="bankName"
+              placeholder="HBL"
+              value={formBankName}
+              onChange={(e) => setFormBankName(e.target.value)}
               className="form-input"
               required
             />
           </label>
-          <label htmlFor="empCnic" className="form-group">
-            <h3 className="form-label">Employee CNIC</h3>
+
+          <label htmlFor="bankAccNum" className="form-group">
+            <h3 className="form-label">Bank Account Number</h3>
             <input
               type="text"
-              name="empCnic"
-              id="empCnic"
-              placeholder="42000-2416284-5"
-              value={empCNIC}
-              onChange={(e) => setCnic(e.target.value)}
-              pattern="^\d{5}-\d{7}-\d{2}$"
-              title="CNIC should be in the format XXXXX-XXXXXXX-XX where 'X' is a digit."
+              name="bankAccNum"
+              id="bankAccNum"
+              placeholder="PK00ABCD1234567890123456"
+              value={formBankAccNum}
+              onChange={(e) => setFormBankAccNum(e.target.value)}
               className="form-input"
               required
             />
           </label>
-          <label htmlFor="empBD" className="form-group">
-            <h3 className="form-label">Employee Date Of Birth</h3>
-            <input
-              type="date"
-              name="empBD"
-              id="empBD"
-              value={dateOfBirth}
-              onChange={(e) => setDate(e.target.value)}
+
+          <label htmlFor="postalAddress" className="form-group">
+            <h3 className="form-label">Postal Address</h3>
+            <textarea
+              name="postalAddress"
+              id="postalAddress"
+              placeholder="House #, Street, City"
+              value={formPostalAddress}
+              onChange={(e) => setFormPostalAddress(e.target.value)}
               className="form-input"
+              rows={3}
               required
             />
           </label>
+
+          <label htmlFor="perAddress" className="form-group">
+            <h3 className="form-label">Permanent Address</h3>
+            <textarea
+              name="perAddress"
+              id="perAddress"
+              placeholder="House #, Street, City"
+              value={formPerAddress}
+              onChange={(e) => setFormPerAddress(e.target.value)}
+              className="form-input"
+              rows={3}
+              required
+            />
+          </label>
+
           <button type="submit" className="form-button">
             {update ? "Update" : "Submit"}
-          </button> */}
+          </button>
         </form>
         <section className="table-container" aria-label="Employee data table">
           <h2 className="table-title">Employee Data</h2>
