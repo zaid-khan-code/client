@@ -14,7 +14,7 @@ function ExtraEmp() {
   const [formContact2, setFormContact2] = useState("");
   const [formEmgContact1, setFormEmgContact1] = useState("");
   const [formEmgContact2, setFormEmgContact2] = useState("");
-  const [empCNIC, setCnic] = useState("");
+  const [empCNIC, setCnic] = useState(""); 
   const [dateOfBirth, setDate] = useState("");
   const [update, setUpdate] = useState(false);
 
