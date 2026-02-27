@@ -134,8 +134,6 @@ function ExtraEmp() {
   }
   
 
-  
-
   async function updateEmp(employee) {
     setId(employee.id);
     setUpdate(true);
