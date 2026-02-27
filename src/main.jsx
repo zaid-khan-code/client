@@ -10,7 +10,7 @@ createRoot(document.getElementById("root")).render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/extraemp" element={<ExtraEmp />} />
-      <Route path="/empjob" element={<Job />} />
+      <Route path="/jobs" element={<Job />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   </BrowserRouter>,
