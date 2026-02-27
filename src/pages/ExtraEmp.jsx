@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
+import { getEmployeeId, getAllEmployee } from ".././services/employee";
 import {
-  createEmployee,
-  deleteEmployeeById,
-  getAllEmployee,
-  UpdateEmployee,
-  getEmployeeId,
-} from ".././services/employee";
+  createExtraEmployee,
+  getAllExtraEmployee,
+  UpdateExtraEmployee,
+} from ".././services/extraEmp";
 import { Link } from "react-router-dom";
 
 function ExtraEmp() {
@@ -46,6 +45,18 @@ function ExtraEmp() {
   }
 
   function getFormPayload() {
+    console.log({
+      employee_id: formEmpId.trim(),
+      contact_1: formContact1.trim(),
+      contact_2: formContact2.trim(),
+      emg_contact_1: formEmgContact1.trim(),
+      emg_contact_2: formEmgContact2.trim(),
+      bank_name: formBankName.trim(),
+      bank_acc_num: formBankAccNum.trim(),
+      postal_address: formPostalAddress.trim(),
+      per_address: formPerAddress.trim(),
+    });
+
     return {
       employee_id: formEmpId.trim(),
       contact_1: formContact1.trim(),
@@ -82,7 +93,7 @@ function ExtraEmp() {
     const updateUser = getFormPayload();
 
     try {
-      await UpdateEmployee(id, updateUser);
+      await UpdateExtraEmployee(id, updateUser);
       fetchEmployee();
       clearForm();
     } catch (error) {
@@ -96,7 +107,7 @@ function ExtraEmp() {
     const newUser = getFormPayload();
 
     try {
-      await createEmployee(newUser);
+      await createExtraEmployee(newUser);
       fetchEmployee();
       clearForm();
     } catch (error) {
@@ -104,18 +115,18 @@ function ExtraEmp() {
     }
   }
 
-  async function deleteData(id) {
-    try {
-      await deleteEmployeeById(id);
-      fetchEmployee();
-    } catch (error) {
-      throw new Error(`ERROR sending Data ${error}`);
-    }
-  }
+  // async function deleteData(id) {
+  //   // try {
+  //   //   await deleteEmployeeById(id);
+  //   //   fetchEmployee();
+  //   // } catch (error) {
+  //   //   throw new Error(`ERROR sending Data ${error}`);
+  //   // }
+  // }
 
   async function fetchEmployee() {
     try {
-      const getEmp = await getAllEmployee();
+      const getEmp = await getAllExtraEmployee();
       setEmployees(getEmp.data);
     } catch (error) {
       console.log(error);
@@ -237,7 +248,6 @@ function ExtraEmp() {
               value={formBankName}
               onChange={(e) => setFormBankName(e.target.value)}
               className="form-input"
-              required
             />
           </label>
 
@@ -251,7 +261,6 @@ function ExtraEmp() {
               value={formBankAccNum}
               onChange={(e) => setFormBankAccNum(e.target.value)}
               className="form-input"
-              required
             />
           </label>
 
@@ -321,10 +330,14 @@ function ExtraEmp() {
                       }
                     >
                       <td>{employee.employee_id || "-"}</td>
+                      {/* contact_1 contact_2 emg_contact_1 emg_contact_2 bank_name */}
                       <td>{employee.name || "-"}</td>
                       <td>{employee.father_name || "-"}</td>
                       <td>{employee.cnic || "-"}</td>
                       <td>{employee.date_of_birth || "-"}</td>
+                      <td>{employee.contact_1 || "-"}</td>
+                      <td>{employee.contact_2 || "-"}</td>
+                      <td>{employee.bank_name || "-"}</td>
                       <td
                         onClick={() => {
                           deleteData(employee.id);
