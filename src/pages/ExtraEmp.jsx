@@ -22,6 +22,8 @@ function ExtraEmp() {
   const [employees, setEmployees] = useState([]);
   const [id, setId] = useState(0);
   const [employeeId, setEmployeeId] = useState([]);
+  console.log(id);
+  console.log(update);
 
   async function fetchEmpIds() {
     try {
@@ -45,28 +47,16 @@ function ExtraEmp() {
   }
 
   function getFormPayload() {
-    console.log({
-      employee_id: formEmpId.trim(),
-      contact_1: formContact1.trim(),
-      contact_2: formContact2.trim(),
-      emg_contact_1: formEmgContact1.trim(),
-      emg_contact_2: formEmgContact2.trim(),
-      bank_name: formBankName.trim(),
-      bank_acc_num: formBankAccNum.trim(),
-      postal_address: formPostalAddress.trim(),
-      per_address: formPerAddress.trim(),
-    });
-
     return {
       employee_id: formEmpId.trim(),
       contact_1: formContact1.trim(),
       contact_2: formContact2.trim(),
-      emg_contact_1: formEmgContact1.trim(),
-      emg_contact_2: formEmgContact2.trim(),
+      emergence_contact_1: formEmgContact1.trim(),
+      emergence_contact_2: formEmgContact2.trim(),
       bank_name: formBankName.trim(),
       bank_acc_num: formBankAccNum.trim(),
       postal_address: formPostalAddress.trim(),
-      per_address: formPerAddress.trim(),
+      perment_address: formPerAddress.trim(),
     };
   }
 
@@ -90,10 +80,22 @@ function ExtraEmp() {
   }
 
   async function sendUpdatedEmp() {
-    const updateUser = getFormPayload();
+    const updateUser = {
+      id: id,
+      employee_id: formEmpId.trim(),
+      contact_1: formContact1.trim(),
+      contact_2: formContact2.trim(),
+      emergence_contact_1: formEmgContact1.trim(),
+      emergence_contact_2: formEmgContact2.trim(),
+      bank_name: formBankName.trim(),
+      bank_acc_num: formBankAccNum.trim(),
+      postal_address: formPostalAddress.trim(),
+      perment_address: formPerAddress.trim(),
+    };
+    console.log(updateUser);
 
     try {
-      await UpdateExtraEmployee(id, updateUser);
+      await UpdateExtraEmployee(updateUser);
       fetchEmployee();
       clearForm();
     } catch (error) {
@@ -132,20 +134,20 @@ function ExtraEmp() {
       console.log(error);
     }
   }
+  console.log(employees);
 
-     
   async function updateEmp(employee) {
     setId(employee.id);
     setUpdate(true);
     setFormEmpId(employee.employee_id ?? "");
     setFormContact1(employee.contact_1 ?? "");
     setFormContact2(employee.contact_2 ?? "");
-    setFormEmgContact1(employee.emg_contact_1 ?? "");
-    setFormEmgContact2(employee.emg_contact_2 ?? "");
+    setFormEmgContact1(employee.emergence_contact_1 ?? "");
+    setFormEmgContact2(employee.emergence_contact_2 ?? "");
     setFormBankName(employee.bank_name ?? "");
     setFormBankAccNum(employee.bank_acc_num ?? "");
     setFormPostalAddress(employee.postal_address ?? "");
-    setFormPerAddress(employee.per_address ?? "");
+    setFormPerAddress(employee.perment_address ?? "");
   }
 
   useEffect(() => {
@@ -306,11 +308,19 @@ function ExtraEmp() {
             <table className="employee-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Employee ID</th>
                   <th>Name</th>
                   <th>Father Name</th>
                   <th>CNIC</th>
                   <th>Date of Birth</th>
+                  <th>Contact 1</th>
+                  <th>Contact 2</th>
+                  <th>Bank Name</th>
+                  <th>Bank Account Number</th>
+                  <th>Prement Addres</th>
+                  <th>Postal Addres</th>
+                  <th>Extra Id</th>
                 </tr>
               </thead>
               <tbody>
@@ -330,8 +340,8 @@ function ExtraEmp() {
                         `employee-row-${index}`
                       }
                     >
+                      <td>{employee.id || "-"}</td>
                       <td>{employee.employee_id || "-"}</td>
-                      {/* contact_1 contact_2 emg_contact_1 emg_contact_2 bank_name */}
                       <td>{employee.name || "-"}</td>
                       <td>{employee.father_name || "-"}</td>
                       <td>{employee.cnic || "-"}</td>
@@ -339,6 +349,11 @@ function ExtraEmp() {
                       <td>{employee.contact_1 || "-"}</td>
                       <td>{employee.contact_2 || "-"}</td>
                       <td>{employee.bank_name || "-"}</td>
+                      <td>{employee.bank_acc_num || "-"}</td>
+                      <td>{employee.perment_address || "-"}</td>
+                      <td>{employee.postal_address || "-"}</td>
+                      <td>{employee.id || "-"}</td>
+
                       <td
                         onClick={() => {
                           deleteData(employee.id);
