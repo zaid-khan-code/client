@@ -161,7 +161,7 @@ function ExtraEmp() {
         <form onSubmit={submitData} className="form-container">
           <h1 className="form-title">Employee Form</h1>
           <h1 className="form-title">
-            <Link to="/empjob">Go to the Employee Job Form</Link>
+            <Link to="/jobs">Go to the Employee Job Form</Link>
           </h1>
 
           <label htmlFor="empNum" className="form-group">

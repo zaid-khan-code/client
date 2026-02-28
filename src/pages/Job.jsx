@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   createEmployee,
   deleteEmployeeById,
@@ -8,54 +8,127 @@ import {
 } from ".././services/employee";
 import { Link } from "react-router-dom";
 
+const departmentOptions = [
+  { id: "1", label: "Human Resources" },
+  { id: "2", label: "Accounts" },
+  { id: "3", label: "Operations" },
+  { id: "4", label: "Engineering" },
+];
+
+const designationOptions = [
+  { id: "1", label: "Manager" },
+  { id: "2", label: "Supervisor" },
+  { id: "3", label: "Officer" },
+  { id: "4", label: "Associate" },
+];
+
+const employmentTypeOptions = [
+  { id: "1", label: "Full-Time" },
+  { id: "2", label: "Part-Time" },
+  { id: "3", label: "Contract" },
+  { id: "4", label: "Intern" },
+];
+
+const jobStatusOptions = [
+  { id: "1", label: "Active" },
+  { id: "2", label: "On Hold" },
+  { id: "3", label: "Resigned" },
+  { id: "4", label: "Terminated" },
+];
+
+function getLabelById(options, id) {
+  const item = options.find((option) => String(option.id) === String(id));
+  return item ? item.label : id || "-";
+}
+
+function getIdByLabel(options, label) {
+  if (!label) {
+    return "";
+  }
+  const item = options.find(
+    (option) => option.label.toLowerCase() === String(label).toLowerCase(),
+  );
+  return item ? String(item.id) : "";
+}
+
 function Job() {
   const [formEmpId, setFormEmpId] = useState("");
-  const [formDepartment, setFormDepartment] = useState("");
-  const [formDesignation, setFormDesignation] = useState("");
-  const [formEmploymentType, setFormEmploymentType] = useState("");
-  const [formShiftTiming, setFormShiftTiming] = useState("");
-  const [formJoiningDate, setFormJoiningDate] = useState("");
-  const [formEndDate, setFormEndDate] = useState("");
-  // const [formBasicSalary, setFormBasicSalary] = useState("");
-  const [formWorkLocation, setFormWorkLocation] = useState("");
+  const [formDepartmentId, setFormDepartmentId] = useState("");
+  const [formDesignationId, setFormDesignationId] = useState("");
+  const [formEmploymentTypeId, setFormEmploymentTypeId] = useState("");
+  const [formJobStatusId, setFormJobStatusId] = useState("");
+  const [formDateOfJoining, setFormDateOfJoining] = useState("");
+  const [formDateOfExit, setFormDateOfExit] = useState("");
   const [update, setUpdate] = useState(false);
 
   const [employees, setEmployees] = useState([]);
   const [id, setId] = useState(0);
   const [employeeId, setEmployeeId] = useState([]);
 
+  const departmentLabelMap = useMemo(
+    () =>
+      departmentOptions.reduce((acc, option) => {
+        acc[String(option.id)] = option.label;
+        return acc;
+      }, {}),
+    [],
+  );
+
+  const designationLabelMap = useMemo(
+    () =>
+      designationOptions.reduce((acc, option) => {
+        acc[String(option.id)] = option.label;
+        return acc;
+      }, {}),
+    [],
+  );
+
+  const employmentTypeLabelMap = useMemo(
+    () =>
+      employmentTypeOptions.reduce((acc, option) => {
+        acc[String(option.id)] = option.label;
+        return acc;
+      }, {}),
+    [],
+  );
+
+  const jobStatusLabelMap = useMemo(
+    () =>
+      jobStatusOptions.reduce((acc, option) => {
+        acc[String(option.id)] = option.label;
+        return acc;
+      }, {}),
+    [],
+  );
+
   async function fetchEmpIds() {
     try {
       const empId = await getEmployeeId();
       setEmployeeId(empId.data);
     } catch (error) {
-      throw new Error("error", error);
+      throw new Error("Error loading employee IDs");
     }
   }
 
   function clearForm() {
     setFormEmpId("");
-    setFormDepartment("");
-    setFormDesignation("");
-    setFormEmploymentType("");
-    setFormShiftTiming("");
-    setFormJoiningDate("");
-    setFormEndDate("");
-    setFormBasicSalary("");
-    setFormWorkLocation("");
+    setFormDepartmentId("");
+    setFormDesignationId("");
+    setFormEmploymentTypeId("");
+    setFormJobStatusId("");
+    setFormDateOfJoining("");
+    setFormDateOfExit("");
   }
 
   function getFormPayload() {
     return {
       employee_id: formEmpId.trim(),
-      department: formDepartment.trim(),
-      designation: formDesignation.trim(),
-      employment_type: formEmploymentType.trim(),
-      shift_timing: formShiftTiming.trim(),
-      joining_date: formJoiningDate.trim(),
-      end_date: formEndDate.trim(),
-      basic_salary: formBasicSalary.trim(),
-      work_location: formWorkLocation.trim(),
+      department_id: Number(formDepartmentId),
+      designation_id: Number(formDesignationId),
+      employment_type_id: Number(formEmploymentTypeId),
+      job_status_id: Number(formJobStatusId),
+      date_of_joining: formDateOfJoining.trim(),
+      date_of_exit: formDateOfExit.trim() || null,
     };
   }
 
@@ -63,14 +136,11 @@ function Job() {
     e.preventDefault();
     if (
       !formEmpId.trim() ||
-      !formDepartment.trim() ||
-      !formDesignation.trim() ||
-      !formEmploymentType.trim() ||
-      !formShiftTiming.trim() ||
-      !formJoiningDate.trim() ||
-      !formEndDate.trim() ||
-      !formBasicSalary.trim() ||
-      !formWorkLocation.trim()
+      !formDepartmentId.trim() ||
+      !formDesignationId.trim() ||
+      !formEmploymentTypeId.trim() ||
+      !formJobStatusId.trim() ||
+      !formDateOfJoining.trim()
     ) {
       return;
     }
@@ -83,7 +153,7 @@ function Job() {
 
     try {
       await UpdateEmployee(id, updateUser);
-      fetchEmployee();
+      await fetchEmployee();
       clearForm();
     } catch (error) {
       throw new Error(`ERROR sending Data ${error}`);
@@ -97,17 +167,17 @@ function Job() {
 
     try {
       await createEmployee(newUser);
-      fetchEmployee();
+      await fetchEmployee();
       clearForm();
     } catch (error) {
       throw new Error(`ERROR sending Data ${error}`);
     }
   }
 
-  async function deleteData(id) {
+  async function deleteData(employeeRecordId) {
     try {
-      await deleteEmployeeById(id);
-      fetchEmployee();
+      await deleteEmployeeById(employeeRecordId);
+      await fetchEmployee();
     } catch (error) {
       throw new Error(`ERROR sending Data ${error}`);
     }
@@ -122,18 +192,34 @@ function Job() {
     }
   }
 
-  async function updateEmp(employee) {
+  function updateEmp(employee) {
     setId(employee.id);
     setUpdate(true);
-    setFormEmpId(employee.employee_id ?? "");
-    setFormDepartment(employee.department ?? "");
-    setFormDesignation(employee.designation ?? "");
-    setFormEmploymentType(employee.employment_type ?? "");
-    setFormShiftTiming(employee.shift_timing ?? "");
-    setFormJoiningDate(employee.joining_date ?? "");
-    setFormEndDate(employee.end_date ?? "");
-    setFormBasicSalary(employee.basic_salary ?? "");
-    setFormWorkLocation(employee.work_location ?? "");
+    setFormEmpId(String(employee.employee_id ?? ""));
+    setFormDepartmentId(
+      String(
+        employee.department_id ?? getIdByLabel(departmentOptions, employee.department),
+      ),
+    );
+    setFormDesignationId(
+      String(
+        employee.designation_id ??
+          getIdByLabel(designationOptions, employee.designation),
+      ),
+    );
+    setFormEmploymentTypeId(
+      String(
+        employee.employment_type_id ??
+          getIdByLabel(employmentTypeOptions, employee.employment_type),
+      ),
+    );
+    setFormJobStatusId(
+      String(
+        employee.job_status_id ?? getIdByLabel(jobStatusOptions, employee.job_status),
+      ),
+    );
+    setFormDateOfJoining(employee.date_of_joining ?? employee.joining_date ?? "");
+    setFormDateOfExit(employee.date_of_exit ?? employee.end_date ?? "");
   }
 
   useEffect(() => {
@@ -171,120 +257,112 @@ function Job() {
             </select>
           </label>
 
-          <label htmlFor="department" className="form-group">
+          <label htmlFor="departmentId" className="form-group">
             <h3 className="form-label">Department</h3>
-            <input
-              type="text"
-              name="department"
-              id="department"
-              placeholder="Engineering"
-              value={formDepartment}
-              onChange={(e) => setFormDepartment(e.target.value)}
+            <select
+              id="departmentId"
+              name="departmentId"
+              value={formDepartmentId}
+              onChange={(e) => setFormDepartmentId(e.target.value)}
               className="form-input"
               required
-            />
+            >
+              <option value="" className="hidden">
+                Select Department
+              </option>
+              {departmentOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </label>
 
-          <label htmlFor="designation" className="form-group">
+          <label htmlFor="designationId" className="form-group">
             <h3 className="form-label">Designation</h3>
-            <input
-              type="text"
-              name="designation"
-              id="designation"
-              placeholder="Software Engineer"
-              value={formDesignation}
-              onChange={(e) => setFormDesignation(e.target.value)}
+            <select
+              id="designationId"
+              name="designationId"
+              value={formDesignationId}
+              onChange={(e) => setFormDesignationId(e.target.value)}
               className="form-input"
               required
-            />
+            >
+              <option value="" className="hidden">
+                Select Designation
+              </option>
+              {designationOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </label>
 
-          <label htmlFor="employmentType" className="form-group">
+          <label htmlFor="employmentTypeId" className="form-group">
             <h3 className="form-label">Employment Type</h3>
             <select
-              name="employmentType"
-              id="employmentType"
-              value={formEmploymentType}
-              onChange={(e) => setFormEmploymentType(e.target.value)}
+              id="employmentTypeId"
+              name="employmentTypeId"
+              value={formEmploymentTypeId}
+              onChange={(e) => setFormEmploymentTypeId(e.target.value)}
               className="form-input"
               required
             >
               <option value="" className="hidden">
                 Select Employment Type
               </option>
-              <option value="Full-Time">Full-Time</option>
-              <option value="Part-Time">Part-Time</option>
-              <option value="Contract">Contract</option>
-              <option value="Intern">Intern</option>
+              {employmentTypeOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
 
-          <label htmlFor="shiftTiming" className="form-group">
-            <h3 className="form-label">Shift Timing</h3>
-            <input
-              type="text"
-              name="shiftTiming"
-              id="shiftTiming"
-              placeholder="9:00 AM - 6:00 PM"
-              value={formShiftTiming}
-              onChange={(e) => setFormShiftTiming(e.target.value)}
+          <label htmlFor="jobStatusId" className="form-group">
+            <h3 className="form-label">Job Status</h3>
+            <select
+              id="jobStatusId"
+              name="jobStatusId"
+              value={formJobStatusId}
+              onChange={(e) => setFormJobStatusId(e.target.value)}
               className="form-input"
               required
-            />
+            >
+              <option value="" className="hidden">
+                Select Job Status
+              </option>
+              {jobStatusOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </label>
 
-          <label htmlFor="joiningDate" className="form-group">
-            <h3 className="form-label">Joining Date</h3>
+          <label htmlFor="dateOfJoining" className="form-group">
+            <h3 className="form-label">Date of Joining</h3>
             <input
               type="date"
-              name="joiningDate"
-              id="joiningDate"
-              value={formJoiningDate}
-              onChange={(e) => setFormJoiningDate(e.target.value)}
+              name="dateOfJoining"
+              id="dateOfJoining"
+              value={formDateOfJoining}
+              onChange={(e) => setFormDateOfJoining(e.target.value)}
               className="form-input"
               required
             />
           </label>
 
-          <label htmlFor="endDate" className="form-group">
-            <h3 className="form-label">End Date</h3>
+          <label htmlFor="dateOfExit" className="form-group">
+            <h3 className="form-label">Date of Exit</h3>
             <input
               type="date"
-              name="endDate"
-              id="endDate"
-              value={formEndDate}
-              onChange={(e) => setFormEndDate(e.target.value)}
+              name="dateOfExit"
+              id="dateOfExit"
+              value={formDateOfExit}
+              onChange={(e) => setFormDateOfExit(e.target.value)}
               className="form-input"
-              required
-            />
-          </label>
-
-          <label htmlFor="basicSalary" className="form-group">
-            <h3 className="form-label">Basic Salary</h3>
-            <input
-              type="number"
-              name="basicSalary"
-              id="basicSalary"
-              placeholder="80000"
-              value={formBasicSalary}
-              onChange={(e) => setFormBasicSalary(e.target.value)}
-              min="0"
-              className="form-input"
-              required
-            />
-          </label>
-
-          <label htmlFor="workLocation" className="form-group">
-            <h3 className="form-label">Work Location</h3>
-            <input
-              type="text"
-              name="workLocation"
-              id="workLocation"
-              placeholder="Lahore Office"
-              value={formWorkLocation}
-              onChange={(e) => setFormWorkLocation(e.target.value)}
-              className="form-input"
-              required
             />
           </label>
 
@@ -295,27 +373,26 @@ function Job() {
         <section className="table-container" aria-label="Employee job data table">
           <h2 className="table-title">Employee Job Data</h2>
           <h2 className="table-title">
-            <button onClick={() => fetchEmployee()}>Refresh Data </button>
+            <button onClick={() => fetchEmployee()}>Refresh Data</button>
           </h2>
           <div className="table-wrapper">
             <table className="employee-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Employee ID</th>
                   <th>Department</th>
                   <th>Designation</th>
                   <th>Employment Type</th>
-                  <th>Shift Timing</th>
-                  <th>Joining Date</th>
-                  <th>End Date</th>
-                  <th>Basic Salary</th>
-                  <th>Work Location</th>
+                  <th>Job Status</th>
+                  <th>Date of Joining</th>
+                  <th>Date of Exit</th>
                 </tr>
               </thead>
               <tbody>
                 {employees.length === 0 ? (
                   <tr>
-                    <td className="table-empty" colSpan="9">
+                    <td className="table-empty" colSpan="10">
                       No employee data available.
                     </td>
                   </tr>
@@ -329,28 +406,43 @@ function Job() {
                         `employee-row-${index}`
                       }
                     >
+                      <td>{employee.id || "-"}</td>
                       <td>{employee.employee_id || "-"}</td>
-                      <td>{employee.department || "-"}</td>
-                      <td>{employee.designation || "-"}</td>
-                      <td>{employee.employment_type || "-"}</td>
-                      <td>{employee.shift_timing || "-"}</td>
-                      <td>{employee.joining_date || "-"}</td>
-                      <td>{employee.end_date || "-"}</td>
-                      <td>{employee.basic_salary || "-"}</td>
-                      <td>{employee.work_location || "-"}</td>
+                      <td>
+                        {employee.department ||
+                          departmentLabelMap[String(employee.department_id)] ||
+                          "-"}
+                      </td>
+                      <td>
+                        {employee.designation ||
+                          designationLabelMap[String(employee.designation_id)] ||
+                          "-"}
+                      </td>
+                      <td>
+                        {employee.employment_type ||
+                          employmentTypeLabelMap[String(employee.employment_type_id)] ||
+                          "-"}
+                      </td>
+                      <td>
+                        {employee.job_status ||
+                          jobStatusLabelMap[String(employee.job_status_id)] ||
+                          "-"}
+                      </td>
+                      <td>{employee.date_of_joining || employee.joining_date || "-"}</td>
+                      <td>{employee.date_of_exit || employee.end_date || "-"}</td>
                       <td
                         onClick={() => {
                           deleteData(employee.id);
                         }}
                         className="bg-[#ff3232] text-white"
                       >
-                        <button>Delete Employee </button>
+                        <button>Delete Employee</button>
                       </td>
                       <td
                         onClick={() => updateEmp(employee)}
                         className="bg-[#3aff3a] text-white"
                       >
-                        <button>Update Employee </button>
+                        <button>Update Employee</button>
                       </td>
                     </tr>
                   ))
